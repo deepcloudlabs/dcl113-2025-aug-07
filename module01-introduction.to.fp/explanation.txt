@@ -1,0 +1,50 @@
+1. Imperative Programming: pp, oop, gp, aop,...
+   Flow/Algorithm -> Design
+   Loop -> Global Data
+   Problem -> Algorithm         -> Solution
+   Data    -> Loop: Global Data -> Solution
+
+2. Declarative Programming: SQL, FP, OOP
+   Problem -> Declare Solution -> Solution
+              what is solution?
+
+   select sum(population)
+   from countries
+   where continent="Europe"
+
+Functional Programming in c++
+FP -> OOP
+      class -> object
+      encapsulation -> data + method
+      information hiding, ocp, srp, isp, ...
+
+I. Higher-Order Function (HoF): functions as parameters
+Pipeline: Chain of HoF's
+II. Pure Function
+    c-like function:
+    int fun(int x,int y){
+       return x+y;
+    }
+    lambda expression -> function object
+    [](int x,int z){return x+y;}
+    function object:
+    struct Fun {
+       int operator()(int x,int y){
+          return x+y;
+       }
+    }
+
+FP -> immutability -> I. Quality II. Ready to be parallelized
+C#  : LINQ       -> parallel
+Java: Stream API -> parallel
+C++ : STL        -> parallel/numerics, parallel/algorithm, ...
+      Ranges     -> Parallel Ranges -> not yet!
+      Alternative C++ Solutions for CPU & GPU:
+      3rd Library: Ranges GPU -> gpu
+      https://github.com/pdziepak/ranges-gpu
+      https://github.com/uxlfoundation/oneTBB
+      CPU Core
+      Intel TBB -> Intel CPU Core
+      nVidia: CUDA -> nVidia GPU
+      OpenCl (https://www.khronos.org/api/index_2017/opencl)
+      CPU + GPU + Accelerator Card

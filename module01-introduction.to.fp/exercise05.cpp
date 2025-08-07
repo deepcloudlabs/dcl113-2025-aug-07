@@ -1,57 +1,123 @@
-#include <algorithm>
-#include <fstream>
 #include <iostream>
-#include <numeric>
-#include <string>
+#include <fstream>
 #include <vector>
-// problem: data
-std::vector<std::string> file_names{
-    std::string("d:\\tmp\\file1.txt"),
-    std::string("d:\\tmp\\file2.txt"),
-    std::string("d:\\tmp\\file3.txt"),
-    std::string("d:\\tmp\\file4.txt"),
-    std::string("d:\\tmp\\file5.txt")
-};
+#include <algorithm>
+#include <parallel/numeric>
+#include <parallel/algorithm>
+#include <execution>
+#include <ranges>
 
-// declarative programming: functional programming
-// pipeline
-inline
-auto
-is_new_line(char c) {
-    return c == '\n';
-}
+using namespace std;
 
-auto&
-read_one_char(std::ifstream& input,char &c) {
-    return input.get(c);
+int getLineCount(const string &file_name);
+
+template <std::ranges::range R>
+constexpr auto
+to_vector(R &&r){
+    using elem_t = std::decay_t<std::ranges::range_value_t<R>>;
+    return vector<elem_t>{r.begin(),r.end()};
 }
 
 auto
-open_file(const std::string& file) {
-    return std::ifstream(file);
+count_lines_imperative(vector<string> file_names){
+    vector<int> line_counts; // local/global state
+    for (auto& file_name : file_names){ // external loop
+        int line_count = getLineCount(file_name);
+        line_counts.push_back(line_count); // mutate state
+    }
+    return line_counts;
 }
 
 auto
-map_file_to_line_counts(const std::string &file_name) {
-    std::ifstream input_file(file_name);
-    auto line_count = 1;
+count_lines_declarative(vector<string> file_names)  {
+    vector<int> line_counts(file_names.size()); // local/global state
+    // internal loop, higher-order function
+    transform(execution::par,file_names.begin(),file_names.end(),line_counts.begin(),getLineCount);
+    return line_counts;
+}
+
+int getLineCount(const string &file_name) {
+    ifstream  input_file(file_name);
     char c;
-    // external loop
-    while (read_one_char(input_file,c)) {
-        if (is_new_line(c)) {
-            line_count++;
-        }
+    auto line_count = 0; // state
+    while (input_file.get(c)){ // loop
+        if (c== '\n')
+            line_count++; // mutate state
     }
     return line_count;
 }
 
+struct topla { // function -> operator()
+    int operator() (int x,int y){
+        return x+y;
+    }
+};
+
+auto
+fun(int x,int y){
+    return x+y;
+}
+
+auto
+open_file(const string& file){
+    cout << "open_file(" << file << ")" << endl;
+    return ifstream(file);
+}
+
+int
+count_lines_in_file(ifstream input_file){
+    cout << "count_lines_in_file()" << endl;
+    return count(istreambuf_iterator<char>(input_file),istreambuf_iterator<char>(),'\n');
+}
+
+auto
+count_lines_declarative_ranges(vector<string> &files){
+    // vector<string> -> vector<ifstream> -> vector<int>
+    return to_vector(
+            // 1-PASS
+            files | std::ranges::views::transform(open_file) // vector<string> -> vector<ifstream>
+                    | std::ranges::views::transform(count_lines_in_file) // vector<ifstream> -> vector<int>
+            );
+    // ranges (c++) -> C# LINQ -> Java Stream API
+    // HoF -> Filter/Map (transform)/ Reduce (accumulate)
+    // python, js -> generator function
+}
+
 int main() {
-    std::vector<int> line_counts{};
-    // Higher-Order Function (HoF)
-    // Internal Loop -> transform
-    // vector<string> -- map --> vector<int> -- reduce --> int
-    std::transform(file_names.begin(),file_names.end(),std::back_inserter(line_counts),map_file_to_line_counts);
-    auto total_line_counts = std::accumulate(line_counts.begin(),line_counts.end(),int(),std::plus<int>{});
-    std::cout << total_line_counts << std::endl;
+    vector<string> files{
+        string("/mnt/d/tmp/file1.txt"),
+        string("/mnt/d/tmp/file2.txt"),
+        string("/mnt/d/tmp/file3.txt"),
+        string("/mnt/d/tmp/file4.txt"),
+        string("/mnt/d/tmp/file5.txt")
+    };
+    // imperative programming: procedural (like in C), or oop (like c++)
+    auto total_line_count = 0; // local/global state
+    // external loop
+    for (auto& line_count : count_lines_imperative(files)){
+        total_line_count += line_count; // state mutation
+    }
+    cout << "total line count: " << total_line_count << endl;
+
+    // declarative programming: functional programming (since c++11)
+    auto count_lines = count_lines_declarative(files);
+    // internal loop,  I) higher-order function,
+    //                II) pure functions:
+    //                     i) c-like function
+    //                    ii) lambda expression -> function object
+    //                   iii) function object
+    total_line_count = accumulate(count_lines.begin(),count_lines.end(),0,
+                                  [](auto acc,auto count){
+                                            return acc+count;
+                                           }
+                                  );
+    total_line_count = accumulate(count_lines.begin(),count_lines.end(),int(), topla());
+    total_line_count = accumulate(count_lines.begin(),count_lines.end(),int(), plus<int>());
+    total_line_count = accumulate(count_lines.begin(),count_lines.end(),int(), fun);
+    cout << "total line count: " << total_line_count << endl;
+    // declarative programming
+    auto line_counts = count_lines_declarative_ranges(files);
+    total_line_count = accumulate(line_counts.begin(),line_counts.end(),int(), fun);
+    cout << "total line count: " << total_line_count << endl;
     return 0;
 }

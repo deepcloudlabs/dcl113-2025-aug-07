@@ -9,12 +9,12 @@ using namespace  std;
 class employee {
 public:
     constexpr static const char* gender_name[] = {"female", "male"};
-    constexpr static const char* department_name[] = {"it", "finance","hr","sales"};
+    constexpr static const char* department_name[] = {"it", "finance","hr","sales","marketing"};
     enum gender_t {
         female, male
     };
     enum department_t {
-        it, finance, hr, sales
+        it, finance, hr, sales, marketing
     };
     employee(const string &mFirstName, const string &mLastName, department_t mDepartment, gender_t mGender,
              double mSalary, const string &mIban, int mBirthYear);

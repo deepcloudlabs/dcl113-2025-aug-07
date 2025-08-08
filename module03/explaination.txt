@@ -1,0 +1,19 @@
+Functional Programming
+ I. HoF -> STL: for_each, transform, copy_if, sort, accumulate, ...
+ #include <numeric>
+ #include <algorithm>
+
+ copy_if() // filter
+ transform() // map
+ accumulate() // reduce
+
+ #include <parallel/numeric>
+ #include <parallel/algorithm>
+
+II. Pure Function
+i. c-like function
+ii. lambda expression since c++11
+iii. function object
+    struct + operator()
+   immutable -> side-effect
+   lambda expression -> function object  

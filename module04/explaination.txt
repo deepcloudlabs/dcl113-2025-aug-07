@@ -1,0 +1,11 @@
+Functional Programming
+HoF, Pure
+HoF -> parameter: function -> signature
+
+fun(int x,int y) -> HoF -> (int x)
+
+(int x,2) -- transform --> HoF: (int x)
+
+(int x,int y) -- transform --> HoF: (int y,int x) 
+
+built-int functors

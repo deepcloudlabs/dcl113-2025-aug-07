@@ -957,3 +957,20 @@ int main(int argc, char* argv[]){
     return 0;
 }
 ```
+** How to install GNU C++ 15.2 on Ubuntu 24.04
+
+```bash
+sudo apt update
+sudo apt upgrade -y
+sudo apt install -y build-essential libgmp-dev libmpfr-dev libmpc-dev libisl-dev flex bison wget
+cd /tmp
+wget https://ftp.gnu.org/gnu/gcc/gcc-15.2.0/gcc-15.2.0.tar.gz
+tar -xf gcc-15.2.0.tar.gz
+cd gcc-15.2.0
+mkdir build && cd build
+../configure --prefix=/usr/local/gcc-15.2 --enable-languages=c,c++ --disable-multilib
+make -j$(nproc)
+sudo make install
+update-alternatives --install /usr/bin/gcc gcc /usr/local/gcc-15.2/bin/gcc 100 --slave /usr/bin/g++ g++ /usr/local/gcc-15.2/bin/g++ 
+sudo update-alternatives --config gcc
+```

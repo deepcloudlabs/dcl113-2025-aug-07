@@ -957,7 +957,7 @@ int main(int argc, char* argv[]){
     return 0;
 }
 ```
-** How to install GNU C++ 15.2 on Ubuntu 24.04
+## How to install GNU C++ 15.2 on Ubuntu 24.04
 
 ```bash
 sudo apt update

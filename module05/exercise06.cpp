@@ -1,36 +1,42 @@
 #include <iostream>
-#include <vector>
-#include <algorithm>
-#include "employee.h"
+#include <map>
+#include "utility.h"
 
 using namespace std;
+auto
+fib(int n) {
+    cout << "fib(" << n << ") is called..." << endl;
+    if (n == 0) {
+        return 0;
+    } else if (n == 1) {
+        return 1;
+    } else {
+        return fib(n - 1) + fib(n - 2);
+    }
+}
+
+int add(int x,int y){
+    cout << "adding " << x << " and " << y << endl;
+    return x+y;
+}
 
 int main() {
-    vector<employee> employees{
-            {"james",  "sawyer",   employee::department_t::it,      employee::gender_t::male,   250'000, "tr100", 1982},
-            {"kate",   "austen",   employee::department_t::sales,   employee::gender_t::female, 350'000, "tr200", 1986},
-            {"juliet", "burke",    employee::department_t::finance, employee::gender_t::female, 550'000, "tr300", 1983},
-            {"jack",   "shephard", employee::department_t::hr,      employee::gender_t::male,   450'000, "tr400", 1973},
-            {"jack",   "bauer",    employee::department_t::it,      employee::gender_t::male,   150'000, "tr500", 1956}
-    };
-
-
-     auto older_than_50 = [](const employee &emp) {
-        int age = 2025 - emp.getMBirthYear();
-        return age > 50;
-    };
-
-    auto older_than_40 = [](const employee &emp) {
-        int age = 2025 - emp.getMBirthYear();
-        return age > 40;
-    };
-
-     vector<employee> employees_older_than_50{};
-    // higher-order function -> eager function
-    // problems: time complexity, space complexity
-    copy_if(employees.begin(), employees.end(), back_inserter(employees_older_than_50), older_than_50);
-    for (employee &emp: employees_older_than_50) {
-        cout << emp << endl;
-    } 
+    auto fib_memoized = make_memoized(fib);
+    auto add_memoized = make_memoized(add);
+    std::cout << "fib(10): " << fib_memoized(10) << std::endl;
+    std::cout << "fib(10): " << fib_memoized(10) << std::endl;
+    std::cout << "fib(10): " << fib_memoized(10) << std::endl;
+    std::cout << "fib(10): " << fib_memoized(10) << std::endl;
+    std::cout << "fib(10): " << fib_memoized(10) << std::endl;
+    std::cout << "fib(10): " << fib_memoized(10) << std::endl;
+    std::cout << "fib(10): " << fib_memoized(10) << std::endl;
+    std::cout << "add(3,5): " << add_memoized(3,5) << std::endl;
+    std::cout << "add(3,5): " << add_memoized(3,5) << std::endl;
+    std::cout << "add(3,5): " << add_memoized(3,5) << std::endl;
+    std::cout << "add(3,5): " << add_memoized(3,5) << std::endl;
+    std::cout << "add(3,5): " << add_memoized(3,5) << std::endl;
+    std::cout << "add(3,5): " << add_memoized(3,5) << std::endl;
+    std::cout << "add(3,5): " << add_memoized(3,5) << std::endl;
+    std::cout << "add(3,5): " << add_memoized(3,5) << std::endl;
     return 0;
 }

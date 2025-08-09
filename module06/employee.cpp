@@ -1,14 +1,15 @@
+//
+// Created by binku on 8/19/2024.
+//
+
 #include "employee.h"
 
 employee::employee(const string &mFirstName, const string &mLastName, employee::department_t mDepartment,
-                   employee::gender_t mGender, double mSalary, const string &mIban, int mBirthYear) : 
-       m_first_name(mFirstName), 
-       m_last_name(mLastName), 
-       m_department(mDepartment), 
-       m_gender(mGender), 
-       m_salary(mSalary),
-       m_iban(mIban),
-       m_birth_year(mBirthYear) {}
+                   employee::gender_t mGender, double mSalary, const string &mIban, int mBirthYear) : m_first_name(
+        mFirstName), m_last_name(mLastName), m_department(mDepartment), m_gender(mGender), m_salary(mSalary),
+                                                                                                      m_iban(mIban),
+                                                                                                      m_birth_year(
+                                                                                                              mBirthYear) {}
 
 const string &employee::getMFirstName() const {
     return m_first_name;
@@ -47,6 +48,7 @@ employee::employee():
  m_iban("tr1"),
  m_birth_year(1998)
  {}
+
 ostream& operator<<(ostream& os,employee& emp){
     os << "employee["
        << "first name: " << emp.getMFirstName()

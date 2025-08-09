@@ -1,51 +1,47 @@
 #include <iostream>
-#include "utility.h"
+#include <vector>
+#include <algorithm>
+#include <generator>
+#include "employee.h"
 
-int count = 0;
+using namespace std;
 
-long long 
-fib(int n){
-     count++;
-  if (n == 0 || n==1){
-     return n;
-  } else {
-     return fib(n-1) + fib(n-2);
-  } 
+// Higher-Order Function: lazy evaluation
+template<class T, class Iter, class Pred>
+generator<employee>
+kosullu_kopyala(Iter start, Iter end, Pred &pred) {
+    cout << "kosullu_kopyala is running..." << endl;
+    for (auto iter = start; iter < end; iter++) {
+        auto element = *iter;
+        if (pred(element)) {
+            cout << "[kosullu_kopyala] yielding "
+                 << element
+                 << endl;
+            co_yield element;
+        }
+    }
 }
 
-template<class Sig, class F>
-memoize_helper<Sig, std::decay_t<F>>
-make_memoized_r(F &&f) {
-    return {0, std::forward<F>(f)};
-}
+// return
+int main() {
+    vector<employee> employees{
+            {"james",  "sawyer",   employee::department_t::it,      employee::gender_t::male,   250'000, "tr100", 1982},
+            {"kate",   "austen",   employee::department_t::sales,   employee::gender_t::female, 350'000, "tr200", 1986},
+            {"juliet", "burke",    employee::department_t::finance, employee::gender_t::female, 550'000, "tr300", 1983},
+            {"jack",   "shephard", employee::department_t::hr,      employee::gender_t::male,   450'000, "tr400", 1973},
+            {"jack",   "bauer",    employee::department_t::it,      employee::gender_t::male,   150'000, "tr500", 1956}
+    };
+    auto older_than_50 = [](const employee &emp) {
+        int age = 2024 - emp.getMBirthYear();
+        return age > 50;
+    };
 
-int main(){
-    std::cout << "fib(10): " << fib(10) << std::endl;
-    std::cout << "count: " << count << std::endl;
-    auto fib_memoized = make_memoized_r<
-            unsigned long long(int)>(
-            [](auto& fib, int n) {
-                std::cout << "Calculating " << n << "!\n";
-                return n == 0 ? 0 : n == 1 ? 1 : fib(n - 1) + fib(n - 2);
-            });
-    fib_memoized(1);
-    fib_memoized(2);
-    fib_memoized(3);
-    fib_memoized(4);
-    fib_memoized(5);
-    fib_memoized(6);
-    count=0;
-    fib_memoized(7);
-    std::cout << "count: " << count << std::endl;
-    count=0;
-    fib_memoized(8);
-    std::cout << "count: " << count << std::endl;
-    count=0;
-    fib_memoized(9);
-    std::cout << "count: " << count << std::endl;
-    fib_memoized(10);
-    count = 0;
-    std::cout << "fib_memoized(10): " << fib_memoized(10) << std::endl;
-    std::cout << "count: " << count << std::endl;
+    auto employees_older_than_50 = kosullu_kopyala<employee>(employees.begin(), employees.end(), older_than_50);
+    // higher-order function -> kosullu_kopyala -> lazy function
+
+    for (employee emp: employees_older_than_50) {
+        cout << emp << endl;
+        break;
+    }
     return 0;
 }
